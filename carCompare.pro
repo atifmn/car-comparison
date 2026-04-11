@@ -10,13 +10,11 @@ CONFIG += c++17
 
 SOURCES += \
     car.cpp \
-    cartype.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     car.h \
-    cartype.h \
     mainwindow.h
 
 FORMS += \
