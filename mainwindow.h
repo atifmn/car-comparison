@@ -20,13 +20,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
+public slots:
     void onCompareClicked();
 
 private:
     void loadCars();
     void populateCarSelectors();
     QString carDisplayName(const Car &car) const;
+    Car findCar(QString carName);
 
     Ui::MainWindow *ui;
     QVector<Car> m_cars;

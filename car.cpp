@@ -6,6 +6,7 @@ Car::Car()
     , m_mpg(0.0)
     , m_horsepower(0)
     , m_torque(0)
+    , m_weight_lbs(0)
     , m_zeroToSixty(0.0)
 {
 }
@@ -16,7 +17,7 @@ Car::Car(const QString &make,
          double price,
          double mpg,
          int horsepower,
-         int torque,
+         int torque, int weight,
          double zeroToSixty)
     : m_make(make)
     , m_model(model)
@@ -25,6 +26,7 @@ Car::Car(const QString &make,
     , m_mpg(mpg)
     , m_horsepower(horsepower)
     , m_torque(torque)
+    , m_weight_lbs(weight)
     , m_zeroToSixty(zeroToSixty)
 {
 }
@@ -62,6 +64,11 @@ int Car::horsepower() const
 int Car::torque() const
 {
     return m_torque;
+}
+
+int Car::weight() const
+{
+    return m_weight_lbs;
 }
 
 double Car::zeroToSixty() const
@@ -102,6 +109,11 @@ void Car::setHorsepower(int horsepower)
 void Car::setTorque(int torque)
 {
     m_torque = torque;
+}
+
+void Car::setWeight(int weight)
+{
+    m_weight_lbs = weight;
 }
 
 void Car::setZeroToSixty(double zeroToSixty)
