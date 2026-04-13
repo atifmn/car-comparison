@@ -43,14 +43,25 @@ void MainWindow::onCompareClicked()
         return;
     }
 
-    // Math to be done: horsepower + torque + (1000 / 0-60) + (100,000 / weight)
-    double car1Val;
+    // Math to be done: ((1000 / 0-60) * 3.0) + (((horsepower * 1000) / weight) * 2.0) + (((torque * 1000) / weight) * 1.5) + (horsepower * 0.10)
+    double car1Val = ((1000.0 / car1.zeroToSixty()) * 3.0) + (((car1.horsepower() * 1000.0) / car1.weight()) * 2.0)
+                     + (((car1.torque() * 1000.0) / car1.weight()) * 1.5) + (car1.horsepower() * 0.10);
+
+    double car2Val = ((1000.0 / car2.zeroToSixty()) * 3.0) + (((car2.horsepower() * 1000.0) / car2.weight()) * 2.0)
+                     + (((car2.torque() * 1000.0) / car2.weight()) * 1.5) + (car2.horsepower() * 0.10);
+
+    if (car1Val > car2Val){
+        ui->resultsLabel->setText(car1Name + " is the winner. Score: " + QString::number(car1Val));
+    }
+    else {
+        ui->resultsLabel->setText(car2Name + " is the winner. Score: " + QString::number(car2Val));
+    }
 }
 
 void MainWindow::loadCars()
 {
     m_cars = {
-              Car("BMW", "M340i xDrive Sedan", 2025, 64300.0, 29.0, 386, 398, 3951, 4.1),
+              Car("BMW", "M340i xDrive Sedan", 2023, 64300.0, 29.0, 382, 369, 3951, 4.0),
               Car("BMW", "1 Series M Coupe", 2011, 47010.0, 21.0, 335, 370, 3296, 4.7),
               Car("Subaru", "Impreza 2.0i Sedan", 2014, 18895.0, 30.0, 148, 145, 2910, 9.4),
               Car("Hyundai", "Sonata SE", 2025, 26900.0, 32.0, 191, 181, 3316, 7.9),

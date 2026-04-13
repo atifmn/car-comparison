@@ -49,7 +49,7 @@
     <item>
      <widget class="QLabel" name="subtitleLabel">
       <property name="text">
-       <string>Select a type and a car on each side to prepare for comparison.</string>
+       <string>Select a car on each side to prepare for performance comparison.</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -121,9 +121,9 @@
       </property>
       <layout class="QVBoxLayout" name="resultsLayout">
        <item>
-        <widget class="QLabel" name="resultsPlaceholderLabel">
+        <widget class="QLabel" name="resultsLabel">
          <property name="text">
-          <string>Comparison results will appear here once the logic is added.</string>
+          <string>Comparison results will appear here once valid Cars are inputted.</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
