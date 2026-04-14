@@ -37,7 +37,7 @@ public:
     void setWeight(int weight);
     void setZeroToSixty(double zeroToSixty);
 
-    bool operator==(Car &otherCar);
+    bool operator==(const Car &otherCar) const;
 
 private:
     QString m_make;
@@ -49,7 +49,6 @@ private:
     int m_torque;
     int m_weight_lbs;
     double m_zeroToSixty;
-
 };
 
 #endif // CAR_H

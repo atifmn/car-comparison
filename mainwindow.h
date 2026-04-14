@@ -28,7 +28,7 @@ private:
     void loadCars();
     void populateCarSelectors();
     QString carDisplayName(const Car &car) const;
-    Car findCar(QString carName);
+    double performanceScore(const Car &car) const;
 
     Ui::MainWindow *ui;
     QVector<Car> m_cars;

@@ -17,7 +17,8 @@ Car::Car(const QString &make,
          double price,
          double mpg,
          int horsepower,
-         int torque, int weight,
+         int torque,
+         int weight,
          double zeroToSixty)
     : m_make(make)
     , m_model(model)
@@ -76,7 +77,7 @@ double Car::zeroToSixty() const
     return m_zeroToSixty;
 }
 
-bool Car::operator==(Car &other)
+bool Car::operator==(const Car &other) const
 {
     return m_make == other.make() && m_model == other.model() && m_year == other.year() && m_price == other.price()
            && m_mpg == other.mpg() && m_horsepower == other.horsepower() && m_torque == other.torque()

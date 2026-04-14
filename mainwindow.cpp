@@ -4,7 +4,6 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QMessageBox>
-#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -237,12 +236,8 @@ void MainWindow::onCompareClicked()
     QString car1Name = carDisplayName(car1);
     QString car2Name = carDisplayName(car2);
 
-    // Math to be done: ((1000 / 0-60) * 3.0) + (((horsepower * 1000) / weight) * 2.0) + (((torque * 1000) / weight) * 1.5) + (horsepower * 0.10)
-    double car1Val = ((1000.0 / car1.zeroToSixty()) * 3.0) + (((car1.horsepower() * 1000.0) / car1.weight()) * 2.0)
-                     + (((car1.torque() * 1000.0) / car1.weight()) * 1.5) + (car1.horsepower() * 0.10);
-
-    double car2Val = ((1000.0 / car2.zeroToSixty()) * 3.0) + (((car2.horsepower() * 1000.0) / car2.weight()) * 2.0)
-                     + (((car2.torque() * 1000.0) / car2.weight()) * 1.5) + (car2.horsepower() * 0.10);
+    double car1Val = performanceScore(car1);
+    double car2Val = performanceScore(car2);
 
     if (car1Val > car2Val){
         ui->resultsLabel->setText(car1Name + " is the winner.\nScore: " + QString::number(car1Val)
@@ -289,15 +284,11 @@ QString MainWindow::carDisplayName(const Car &car) const
         .arg(car.make(), car.model());
 }
 
-Car MainWindow::findCar(QString carName)
+double MainWindow::performanceScore(const Car &car) const
 {
-    for (int i = 0; i < m_cars.size(); i++){
-        const QString currCarName = carDisplayName(m_cars[i]);
-
-        if (carName == currCarName){
-            return m_cars[i];
-        }
-    }
-
-    return Car();
+    // Math: ((1000 / 0-60) * 3.0) + (((horsepower * 1000) / weight) * 2.0) + (((torque * 1000) / weight) * 1.5) + (horsepower * 0.10)
+    return ((1000.0 / car.zeroToSixty()) * 3.0)
+           + (((car.horsepower() * 1000.0) / car.weight()) * 2.0)
+           + (((car.torque() * 1000.0) / car.weight()) * 1.5)
+           + (car.horsepower() * 0.10);
 }
