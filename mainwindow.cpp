@@ -25,23 +25,39 @@ MainWindow::~MainWindow()
 
 void MainWindow::onCompareClicked()
 {
-    QString car1Name = ui->leftCarComboBox->currentText();
-    QString car2Name = ui->rightCarComboBox->currentText();
+    int leftBoxIndex = ui->leftCarComboBox->currentIndex();
+    int rightBoxIndex = ui->rightCarComboBox->currentIndex();
 
-    Car car1 = findCar(car1Name);
-    Car car2 = findCar(car2Name);
-
-    if (car1.year() == 0 || car2.year() == 0) // If the cars have the year "0", this means correct inputs are not in both boxes and the compare is invalid
+    // If any of the selectors are still on index 0, no actual car is selected for both and so the input is invalid for comapring Cars
+    if (leftBoxIndex == 0 || rightBoxIndex == 0)
     {
-        QMessageBox loseMsg(this);
+        QMessageBox invalidMsg(this);
 
-        loseMsg.setWindowTitle("Invalid");
-        loseMsg.setText("Please input valid Cars to compare.");
+        invalidMsg.setWindowTitle("Invalid");
+        invalidMsg.setText("Please input valid Cars to compare.");
 
-        loseMsg.exec();
+        invalidMsg.exec();
 
         return;
     }
+
+    Car car1 = m_cars[leftBoxIndex - 1];
+    Car car2 =  m_cars[rightBoxIndex - 1];
+
+    if (car1 == car2)
+    {
+        QMessageBox equalMsg(this);
+
+        equalMsg.setWindowTitle("Same Car");
+        equalMsg.setText("Please input two different Cars to compare.");
+
+        equalMsg.exec();
+
+        return;
+    }
+
+    QString car1Name = carDisplayName(car1);
+    QString car2Name = carDisplayName(car2);
 
     // Math to be done: ((1000 / 0-60) * 3.0) + (((horsepower * 1000) / weight) * 2.0) + (((torque * 1000) / weight) * 1.5) + (horsepower * 0.10)
     double car1Val = ((1000.0 / car1.zeroToSixty()) * 3.0) + (((car1.horsepower() * 1000.0) / car1.weight()) * 2.0)

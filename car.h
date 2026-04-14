@@ -37,6 +37,8 @@ public:
     void setWeight(int weight);
     void setZeroToSixty(double zeroToSixty);
 
+    bool operator==(Car &otherCar);
+
 private:
     QString m_make;
     QString m_model;
@@ -47,6 +49,7 @@ private:
     int m_torque;
     int m_weight_lbs;
     double m_zeroToSixty;
+
 };
 
 #endif // CAR_H

@@ -76,6 +76,13 @@ double Car::zeroToSixty() const
     return m_zeroToSixty;
 }
 
+bool Car::operator==(Car &other)
+{
+    return m_make == other.make() && m_model == other.model() && m_year == other.year() && m_price == other.price()
+           && m_mpg == other.mpg() && m_horsepower == other.horsepower() && m_torque == other.torque()
+           && m_weight_lbs == other.weight() && m_zeroToSixty == other.zeroToSixty();
+}
+
 void Car::setMake(const QString &make)
 {
     m_make = make;
