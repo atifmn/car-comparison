@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Car Comparison Tool</string>
+   <string>Performance Matchup</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -39,7 +39,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Compare Two Cars</string>
+       <string>Car Comparison</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -49,7 +49,7 @@
     <item>
      <widget class="QLabel" name="subtitleLabel">
       <property name="text">
-       <string>Select a car on each side to prepare for performance comparison.</string>
+       <string>Pick two cars to compare their performance against each other</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -110,23 +110,26 @@
        </size>
       </property>
       <property name="text">
-       <string>Compare</string>
+       <string>Compare Performance</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QGroupBox" name="resultsGroupBox">
       <property name="title">
-       <string>Comparison Area</string>
+       <string>Performance Results</string>
       </property>
       <layout class="QVBoxLayout" name="resultsLayout">
        <item>
         <widget class="QLabel" name="resultsLabel">
          <property name="text">
-          <string>Comparison results will appear here once valid Cars are inputted.</string>
+          <string>Choose two cars, then run the comparison.</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

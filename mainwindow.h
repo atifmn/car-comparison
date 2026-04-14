@@ -24,6 +24,7 @@ public slots:
     void onCompareClicked();
 
 private:
+    void applyTheme();
     void loadCars();
     void populateCarSelectors();
     QString carDisplayName(const Car &car) const;

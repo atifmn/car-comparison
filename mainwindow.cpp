@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    applyTheme();
     loadCars();
     populateCarSelectors();
 
@@ -21,6 +22,143 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::applyTheme()
+{
+    setStyleSheet(R"(
+        QMainWindow {
+            background-color: #101114;
+        }
+
+        QWidget#centralwidget {
+            background-color: #101114;
+            color: #f4f4f5;
+            font-family: "Segoe UI";
+            font-size: 14px;
+        }
+
+        QLabel {
+            color: #f4f4f5;
+        }
+
+        QLabel#titleLabel {
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding-top: 8px;
+        }
+
+        QLabel#subtitleLabel {
+            color: #a1a1aa;
+            font-size: 14px;
+            padding-bottom: 8px;
+        }
+
+        QGroupBox {
+            background-color: #1a1d22;
+            border: 1px solid #343a46;
+            border-radius: 14px;
+            color: #f4f4f5;
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 18px;
+            padding: 18px;
+        }
+
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            subcontrol-position: top left;
+            left: 18px;
+            padding: 0 8px;
+            color: #ff5a4f;
+            background-color: #101114;
+        }
+
+        QComboBox {
+            background-color: #232832;
+            border: 1px solid #3f4654;
+            border-radius: 8px;
+            color: #f4f4f5;
+            min-height: 34px;
+            padding: 6px 12px;
+        }
+
+        QComboBox:hover {
+            border-color: #ff5a4f;
+        }
+
+        QComboBox::drop-down {
+            border: none;
+            width: 28px;
+        }
+
+        QComboBox QAbstractItemView {
+            background-color: #232832;
+            border: 1px solid #3f4654;
+            color: #f4f4f5;
+            selection-background-color: #ff3b30;
+            selection-color: #ffffff;
+        }
+
+        QPushButton#compareButton {
+            background-color: #ff3b30;
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            min-height: 46px;
+            padding: 10px 24px;
+        }
+
+        QPushButton#compareButton:hover {
+            background-color: #ff5a4f;
+        }
+
+        QPushButton#compareButton:pressed {
+            background-color: #d92d25;
+        }
+
+        QLabel#resultsLabel {
+            background-color: #232832;
+            border: 1px solid #343a46;
+            border-radius: 10px;
+            color: #f4f4f5;
+            font-size: 14px;
+            min-height: 120px;
+            padding: 18px;
+        }
+
+        QMenuBar, QStatusBar {
+            background-color: #101114;
+            color: #a1a1aa;
+        }
+
+        QMessageBox {
+            background-color: #1a1d22;
+            color: #f4f4f5;
+        }
+
+        QMessageBox QLabel {
+            color: #f4f4f5;
+        }
+
+        QMessageBox QPushButton {
+            background-color: #ff3b30;
+            border: none;
+            border-radius: 6px;
+            color: #ffffff;
+            min-width: 72px;
+            padding: 6px 14px;
+        }
+
+        QMessageBox QPushButton:hover {
+            background-color: #ff5a4f;
+        }
+    )");
 }
 
 void MainWindow::onCompareClicked()
@@ -67,10 +205,14 @@ void MainWindow::onCompareClicked()
                      + (((car2.torque() * 1000.0) / car2.weight()) * 1.5) + (car2.horsepower() * 0.10);
 
     if (car1Val > car2Val){
-        ui->resultsLabel->setText(car1Name + " is the winner. Score: " + QString::number(car1Val));
+        ui->resultsLabel->setText(car1Name + " is the winner.\nScore: " + QString::number(car1Val)
+                                  + "\n\nHorsePower: " + QString::number(car1.horsepower()) + "\nTorque: " + QString::number(car1.torque())
+                                  + + "\n0-60: " + QString::number(car1.zeroToSixty()) + " Seconds");
     }
     else {
-        ui->resultsLabel->setText(car2Name + " is the winner. Score: " + QString::number(car2Val));
+        ui->resultsLabel->setText(car2Name + " is the winner.\nScore: " + QString::number(car2Val)
+                                  + "\n\nHorsePower: " + QString::number(car2.horsepower()) + "\nTorque: " + QString::number(car2.torque())
+                                  + + "\n0-60: " + QString::number(car2.zeroToSixty()) + " Seconds");
     }
 }
 
