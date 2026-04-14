@@ -57,6 +57,92 @@
      </widget>
     </item>
     <item>
+     <widget class="QGroupBox" name="searchGroupBox">
+      <property name="title">
+       <string>Find Cars</string>
+      </property>
+      <layout class="QGridLayout" name="searchGridLayout">
+       <property name="horizontalSpacing">
+        <number>12</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>10</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="yearSearchLabel">
+         <property name="text">
+          <string>Year</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="yearSearchSpinBox">
+         <property name="minimum">
+          <number>1990</number>
+         </property>
+         <property name="maximum">
+          <number>2026</number>
+         </property>
+         <property name="value">
+          <number>2025</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="makeSearchLabel">
+         <property name="text">
+          <string>Make</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLineEdit" name="makeSearchLineEdit">
+         <property name="placeholderText">
+          <string>BMW</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel" name="modelSearchLabel">
+         <property name="text">
+          <string>Model</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLineEdit" name="modelSearchLineEdit">
+         <property name="placeholderText">
+          <string>M340i</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QPushButton" name="searchButton">
+         <property name="minimumSize">
+          <size>
+           <width>110</width>
+           <height>38</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Search API</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="7">
+        <widget class="QLabel" name="searchStatusLabel">
+         <property name="text">
+          <string>Search for a car based on its Year, Make and Model</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="selectorsLayout">
       <property name="spacing">
        <number>16</number>
@@ -75,7 +161,11 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="leftCarComboBox"/>
+          <widget class="QComboBox" name="leftCarComboBox">
+           <property name="placeholderText">
+            <string>Select Car</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -94,7 +184,11 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="rightCarComboBox"/>
+          <widget class="QComboBox" name="rightCarComboBox">
+           <property name="placeholderText">
+            <string>Select Car</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

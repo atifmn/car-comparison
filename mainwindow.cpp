@@ -4,6 +4,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -85,6 +86,24 @@ void MainWindow::applyTheme()
             padding: 6px 12px;
         }
 
+        QLineEdit, QSpinBox {
+            background-color: #232832;
+            border: 1px solid #3f4654;
+            border-radius: 8px;
+            color: #f4f4f5;
+            min-height: 34px;
+            padding: 6px 12px;
+            selection-background-color: #ff3b30;
+        }
+
+        QLineEdit:hover, QSpinBox:hover {
+            border-color: #ff5a4f;
+        }
+
+        QLineEdit:focus, QSpinBox:focus {
+            border-color: #ff3b30;
+        }
+
         QComboBox:hover {
             border-color: #ff5a4f;
         }
@@ -112,6 +131,27 @@ void MainWindow::applyTheme()
             letter-spacing: 1px;
             min-height: 46px;
             padding: 10px 24px;
+        }
+
+        QPushButton#searchButton {
+            background-color: #232832;
+            border: 1px solid #ff3b30;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            min-height: 38px;
+            padding: 8px 18px;
+        }
+
+        QPushButton#searchButton:hover {
+            background-color: #ff3b30;
+        }
+
+        QLabel#searchStatusLabel {
+            color: #a1a1aa;
+            font-size: 13px;
+            padding-top: 4px;
         }
 
         QPushButton#compareButton:hover {
@@ -166,8 +206,8 @@ void MainWindow::onCompareClicked()
     int leftBoxIndex = ui->leftCarComboBox->currentIndex();
     int rightBoxIndex = ui->rightCarComboBox->currentIndex();
 
-    // If any of the selectors are still on index 0, no actual car is selected for both and so the input is invalid for comapring Cars
-    if (leftBoxIndex == 0 || rightBoxIndex == 0)
+    // // If any of the selectors are still on index 0, no actual car is selected for both and so the input is invalid for comapring Cars
+    if (leftBoxIndex == -1 || rightBoxIndex == -1)
     {
         QMessageBox invalidMsg(this);
 
@@ -179,8 +219,8 @@ void MainWindow::onCompareClicked()
         return;
     }
 
-    Car car1 = m_cars[leftBoxIndex - 1];
-    Car car2 =  m_cars[rightBoxIndex - 1];
+    Car car1 = m_cars[leftBoxIndex];
+    Car car2 =  m_cars[rightBoxIndex];
 
     if (car1 == car2)
     {
@@ -232,13 +272,13 @@ void MainWindow::populateCarSelectors()
     ui->leftCarComboBox->clear();
     ui->rightCarComboBox->clear();
 
-    ui->leftCarComboBox->addItem("Select car", 0);
-    ui->rightCarComboBox->addItem("Select car", 0);
+    // ui->leftCarComboBox->addItem("Select car", 0);
+    // ui->rightCarComboBox->addItem("Select car", 0);
 
     for (int i = 0; i < m_cars.size(); i++) {
         const QString displayName = carDisplayName(m_cars[i]);
-        ui->leftCarComboBox->addItem(displayName, i + 1);
-        ui->rightCarComboBox->addItem(displayName, i + 1);
+        ui->leftCarComboBox->addItem(displayName, i);
+        ui->rightCarComboBox->addItem(displayName, i);
     }
 }
 

@@ -83,3 +83,8 @@ CMakeLists.txt.user*
 /build*/
 build/
 /.qtcreator/
+
+# local API credentials
+.env
+api-keys.ini
+secrets.ini
