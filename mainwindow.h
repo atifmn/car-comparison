@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "car.h"
+#include "carapiclient.h"
 
 #include <QMainWindow>
 #include <QVector>
@@ -22,6 +23,9 @@ public:
 
 public slots:
     void onCompareClicked();
+    void onSearchClicked();
+    void onCarsLoaded(const QVector<Car> &cars);
+    void onApiError(const QString &message);
 
 private:
     void applyTheme();
@@ -31,6 +35,7 @@ private:
     double performanceScore(const Car &car) const;
 
     Ui::MainWindow *ui;
+    CarApiClient m_carApiClient;
     QVector<Car> m_cars;
 };
 #endif // MAINWINDOW_H

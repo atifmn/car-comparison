@@ -2,8 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include <QComboBox>
-#include <QPushButton>
 #include <QMessageBox>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,6 +17,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->compareButton, &QPushButton::clicked,
             this, &MainWindow::onCompareClicked);
+    connect(ui->searchButton, &QPushButton::clicked,
+            this, &MainWindow::onSearchClicked);
+    connect(&m_carApiClient, &CarApiClient::carsLoaded,
+            this, &MainWindow::onCarsLoaded);
+    connect(&m_carApiClient, &CarApiClient::errorOccurred,
+            this, &MainWindow::onApiError);
 }
 
 MainWindow::~MainWindow()
@@ -252,6 +258,47 @@ void MainWindow::onCompareClicked()
     else {
         ui->resultsLabel->setText("These cars are both tied. Value: " + QString::number(car1Val));
     }
+}
+
+void MainWindow::onSearchClicked()
+{
+    const int year = ui->yearSearchSpinBox->value();
+    const QString make = ui->makeSearchLineEdit->text().trimmed();
+    const QString model = ui->modelSearchLineEdit->text().trimmed();
+
+    if (make.isEmpty() || model.isEmpty()) {
+        ui->searchStatusLabel->setText("Enter both a make and model before searching.");
+        return;
+    }
+
+    if (!m_carApiClient.hasCredentials()) {
+        ui->searchStatusLabel->setText("Missing CarAPI credentials. Add CARAPI_TOKEN and CARAPI_SECRET to the run environment before searching.");
+        return;
+    }
+
+    ui->searchStatusLabel->setText(QString("Searching for %1 %2 %3...")
+                                       .arg(year)
+                                       .arg(make, model));
+
+    m_carApiClient.searchCars(year, make, model);
+}
+
+void MainWindow::onCarsLoaded(const QVector<Car> &cars)
+{
+    if (cars.isEmpty()) {
+        ui->searchStatusLabel->setText("No cars were found for that search.");
+        return;
+    }
+
+    m_cars = cars;
+    populateCarSelectors();
+
+    ui->searchStatusLabel->setText(QString("Loaded %1 cars from the API results.").arg(cars.size()));
+}
+
+void MainWindow::onApiError(const QString &message)
+{
+    ui->searchStatusLabel->setText(message);
 }
 
 void MainWindow::loadCars()
