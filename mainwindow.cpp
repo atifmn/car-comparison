@@ -244,10 +244,13 @@ void MainWindow::onCompareClicked()
                                   + "\n\nHorsePower: " + QString::number(car1.horsepower()) + "\nTorque: " + QString::number(car1.torque())
                                   + + "\n0-60: " + QString::number(car1.zeroToSixty()) + " Seconds");
     }
-    else {
+    else if (car1Val < car2Val) {
         ui->resultsLabel->setText(car2Name + " is the winner.\nScore: " + QString::number(car2Val)
                                   + "\n\nHorsePower: " + QString::number(car2.horsepower()) + "\nTorque: " + QString::number(car2.torque())
-                                  + + "\n0-60: " + QString::number(car2.zeroToSixty()) + " Seconds");
+                                  + "\n0-60: " + QString::number(car2.zeroToSixty()) + " Seconds");
+    }
+    else {
+        ui->resultsLabel->setText("These cars are both tied. Value: " + QString::number(car1Val));
     }
 }
 
