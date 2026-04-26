@@ -16,6 +16,7 @@ public:
     explicit CarApiClient(QObject *parent = nullptr);
 
     bool hasCredentials() const;
+    bool hasJwt() const;
     void searchCars(int year, const QString &make, const QString &model);
 
 signals:
@@ -25,8 +26,10 @@ signals:
 private:
     QString apiToken() const;
     QString apiSecret() const;
+    void authenticate();
 
     QNetworkAccessManager m_networkManager;
+    QString m_jwtToken;
 };
 
 #endif // CARAPICLIENT_H
