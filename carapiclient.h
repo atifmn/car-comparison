@@ -27,9 +27,13 @@ private:
     QString apiToken() const;
     QString apiSecret() const;
     void authenticate();
+    void executePendingSearch();
 
     QNetworkAccessManager m_networkManager;
     QString m_jwtToken;
+    int m_pendingYear = 0;
+    QString m_pendingMake;
+    QString m_pendingModel;
 };
 
 #endif // CARAPICLIENT_H

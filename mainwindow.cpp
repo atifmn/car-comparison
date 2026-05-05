@@ -227,6 +227,18 @@ void MainWindow::onCompareClicked()
     Car car1 = m_cars[leftBoxIndex];
     Car car2 =  m_cars[rightBoxIndex];
 
+    if (car1.zeroToSixty() <= 0.0 || car2.zeroToSixty() <= 0.0)
+    {
+        QMessageBox zeroToSixtyMsg(this);
+
+        zeroToSixtyMsg.setWindowTitle("0-60 Required");
+        zeroToSixtyMsg.setText("One or both selected cars are missing 0-60 data. API-loaded cars need a 0-60 value before they can be compared.");
+
+        zeroToSixtyMsg.exec();
+
+        return;
+    }
+
     if (car1 == car2)
     {
         QMessageBox equalMsg(this);
