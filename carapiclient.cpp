@@ -34,6 +34,18 @@ void CarApiClient::searchCars(int year, const QString &make, const QString &mode
     m_pendingMake = make.trimmed();
     m_pendingModel = model.trimmed();
 
+    // NOTE FOR LATER:
+    // CarAPI auth is working, but the free-plan search endpoints have been inconsistent in practice:
+    // - /api/trims returned 403
+    // - /api/models with json filters returned DeprecatedException
+    // - the suggested replacement path from the response did not resolve cleanly
+    //
+    // Best options when resuming:
+    // 1. Verify the exact live-search endpoints allowed by the current CarAPI subscription, OR
+    // 2. Switch to a different vehicle API, OR
+    // 3. Replace API search temporarily with a local JSON dataset so the app can be finished cleanly
+    //
+    // For now, leave this search path simple and revisit provider choice before spending more time here.
     // The free CarAPI dataset is easier to access through models-level endpoints,
     // so use the public/free search flow here instead of paid trim/spec requests.
     executePendingSearch(false);
@@ -102,7 +114,7 @@ void CarApiClient::executePendingSearch(bool useAuthorizationHeader)
         return;
     }
 
-    QUrl url("https://carapi.app/api/models");
+    QUrl url("https://carapi.app/vapi/models/v2");
 
     QUrlQuery query;
     query.addQueryItem("year", QString::number(m_pendingYear));
