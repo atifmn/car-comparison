@@ -27,7 +27,7 @@ private:
     QString apiToken() const;
     QString apiSecret() const;
     void authenticate();
-    void executePendingSearch();
+    void executePendingSearch(bool useAuthorizationHeader = true);
 
     QNetworkAccessManager m_networkManager;
     QString m_jwtToken;
