@@ -279,12 +279,16 @@ void MainWindow::onSearchClicked()
     const int year = ui->yearSearchSpinBox->value();
     const QString make = ui->makeSearchComboBox->currentText().trimmed();
     const QString model = ui->modelSearchComboBox->currentText().trimmed();
+    const bool hasSpecificMake = ui->makeSearchComboBox->currentIndex() > 0;
+    const bool hasSpecificModel = ui->modelSearchComboBox->isEnabled() && ui->modelSearchComboBox->currentIndex() > 0;
 
-    if (ui->makeSearchComboBox->currentIndex() <= 0) {
-        ui->searchStatusLabel->setText("Choose a make before loading cars.");
-        return;
-    }
-
+    // NOTE FOR LATER:
+    // This local search flow currently acts as a year/make filter for both compare selectors together.
+    // Future improvements:
+    // 1. Let users load cars from different brands into Car A and Car B independently
+    // 2. Expand the local catalog with many more cars/trims
+    // 3. Improve selector consistency so search feels more like a polished compare workflow
+    // 4. Revisit API integration later once the local experience is fully solid
     m_cars.clear();
 
     for (const Car &car : m_allCars) {
@@ -292,11 +296,7 @@ void MainWindow::onSearchClicked()
             continue;
         }
 
-        if (car.make() != make) {
-            continue;
-        }
-
-        if (ui->modelSearchComboBox->currentIndex() > 0 && car.model() != model) {
+        if (hasSpecificMake && car.make() != make) {
             continue;
         }
 
@@ -310,25 +310,77 @@ void MainWindow::onSearchClicked()
     }
 
     populateCarSelectors();
-    ui->searchStatusLabel->setText(QString("Loaded %1 local cars for %2 %3.")
-                                       .arg(m_cars.size())
-                                       .arg(year)
-                                       .arg(make));
+
+    if (hasSpecificModel) {
+        const QString selectedDisplayName = QString("%1 %2 %3").arg(year).arg(make, model);
+        int leftIndex = ui->leftCarComboBox->findText(selectedDisplayName);
+        if (leftIndex >= 0) {
+            ui->leftCarComboBox->setCurrentIndex(leftIndex);
+        }
+    }
+
+    if (hasSpecificMake) {
+        ui->searchStatusLabel->setText(QString("Loaded %1 cars for %2 %3.")
+                                           .arg(m_cars.size())
+                                           .arg(year)
+                                           .arg(make));
+    } else {
+        ui->searchStatusLabel->setText(QString("Loaded %1 cars for %2.")
+                                           .arg(m_cars.size())
+                                           .arg(year));
+    }
 }
 
 void MainWindow::onYearChanged(int year)
 {
-    Q_UNUSED(year);
+    m_cars.clear();
+    for (const Car &car : m_allCars) {
+        if (car.year() == year) {
+            m_cars.append(car);
+        }
+    }
+
     populateMakeSearch();
-    clearCarSelectors();
-    ui->searchStatusLabel->setText("Pick a make for the selected year. The model list will unlock after that.");
+    populateCarSelectors();
+    ui->searchStatusLabel->setText(QString("Loaded %1 cars for %2. Choose a make to narrow the list.")
+                                       .arg(m_cars.size())
+                                       .arg(year));
 }
 
 void MainWindow::onMakeChanged(int index)
 {
     Q_UNUSED(index);
     populateModelSearch();
-    clearCarSelectors();
+
+    const int year = ui->yearSearchSpinBox->value();
+    const QString make = ui->makeSearchComboBox->currentText();
+    const bool hasSpecificMake = ui->makeSearchComboBox->currentIndex() > 0;
+
+    m_cars.clear();
+    for (const Car &car : m_allCars) {
+        if (car.year() != year) {
+            continue;
+        }
+
+        if (hasSpecificMake && car.make() != make) {
+            continue;
+        }
+
+        m_cars.append(car);
+    }
+
+    populateCarSelectors();
+
+    if (hasSpecificMake) {
+        ui->searchStatusLabel->setText(QString("Loaded %1 %2 cars for %3. Pick a model to preselect one.")
+                                           .arg(m_cars.size())
+                                           .arg(make)
+                                           .arg(year));
+    } else {
+        ui->searchStatusLabel->setText(QString("Loaded %1 cars for %2.")
+                                           .arg(m_cars.size())
+                                           .arg(year));
+    }
 }
 
 void MainWindow::onCarsLoaded(const QVector<Car> &cars)
@@ -371,7 +423,7 @@ void MainWindow::populateMakeSearch()
 
     ui->makeSearchComboBox->blockSignals(true);
     ui->makeSearchComboBox->clear();
-    ui->makeSearchComboBox->addItem("Select make");
+    ui->makeSearchComboBox->addItem("All makes");
     for (const QString &make : makes) {
         ui->makeSearchComboBox->addItem(make);
     }
@@ -393,7 +445,7 @@ void MainWindow::populateModelSearch()
     ui->modelSearchComboBox->clear();
 
     if (ui->makeSearchComboBox->currentIndex() <= 0) {
-        ui->modelSearchComboBox->addItem("Select model");
+        ui->modelSearchComboBox->addItem("Select make first");
         ui->modelSearchComboBox->setCurrentIndex(0);
         ui->modelSearchComboBox->setEnabled(false);
         ui->modelSearchComboBox->blockSignals(false);
