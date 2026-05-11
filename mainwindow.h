@@ -4,6 +4,7 @@
 #include "car.h"
 #include "carapiclient.h"
 
+#include <QStringList>
 #include <QMainWindow>
 #include <QVector>
 
@@ -24,18 +25,24 @@ public:
 public slots:
     void onCompareClicked();
     void onSearchClicked();
+    void onYearChanged(int year);
+    void onMakeChanged(int index);
     void onCarsLoaded(const QVector<Car> &cars);
     void onApiError(const QString &message);
 
 private:
     void applyTheme();
     void loadCars();
+    void populateMakeSearch();
+    void populateModelSearch();
     void populateCarSelectors();
     QString carDisplayName(const Car &car) const;
     double performanceScore(const Car &car) const;
+    void clearCarSelectors();
 
     Ui::MainWindow *ui;
     CarApiClient m_carApiClient;
+    QVector<Car> m_allCars;
     QVector<Car> m_cars;
 };
 #endif // MAINWINDOW_H

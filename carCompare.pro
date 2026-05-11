@@ -11,12 +11,14 @@ CONFIG += c++17
 SOURCES += \
     car.cpp \
     carapiclient.cpp \
+    localcardata.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     car.h \
     carapiclient.h \
+    localcardata.h \
     mainwindow.h
 
 FORMS += \

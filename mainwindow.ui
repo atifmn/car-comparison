@@ -96,11 +96,7 @@
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QLineEdit" name="makeSearchLineEdit">
-         <property name="placeholderText">
-          <string>BMW</string>
-         </property>
-        </widget>
+        <widget class="QComboBox" name="makeSearchComboBox"/>
        </item>
        <item row="0" column="4">
         <widget class="QLabel" name="modelSearchLabel">
@@ -110,9 +106,9 @@
         </widget>
        </item>
        <item row="0" column="5">
-        <widget class="QLineEdit" name="modelSearchLineEdit">
-         <property name="placeholderText">
-          <string>M340i</string>
+        <widget class="QComboBox" name="modelSearchComboBox">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -125,14 +121,14 @@
           </size>
          </property>
          <property name="text">
-          <string>Search API</string>
+          <string>Load Cars</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0" colspan="7">
        <widget class="QLabel" name="searchStatusLabel">
          <property name="text">
-          <string>Free CarAPI access currently supports model years 2015-2020. Search by year, make, and model.</string>
+          <string>Using a built-in local car catalog for now. Pick a year, choose a make, then narrow by model.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
