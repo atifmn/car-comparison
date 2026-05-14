@@ -8,6 +8,8 @@
 #include <QMainWindow>
 #include <QVector>
 
+class QComboBox;
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -35,6 +37,9 @@ private:
     void loadCars();
     void populateMakeSearch();
     void populateModelSearch();
+    void populateSelectorFilters();
+    void populateModelFilter(QComboBox *makeComboBox, QComboBox *modelComboBox, const QString &disabledText);
+    void populateCarSelector(QComboBox *makeComboBox, QComboBox *modelComboBox, QComboBox *carComboBox);
     void populateCarSelectors();
     QString carDisplayName(const Car &car) const;
     double performanceScore(const Car &car) const;

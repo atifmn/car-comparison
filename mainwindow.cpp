@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     applyTheme();
     loadCars();
     populateMakeSearch();
-    clearCarSelectors();
+    onYearChanged(ui->yearSearchSpinBox->value());
 
     connect(ui->compareButton, &QPushButton::clicked,
             this, &MainWindow::onCompareClicked);
@@ -25,6 +25,24 @@ MainWindow::MainWindow(QWidget *parent)
             this, &MainWindow::onYearChanged);
     connect(ui->makeSearchComboBox, qOverload<int>(&QComboBox::currentIndexChanged),
             this, &MainWindow::onMakeChanged);
+    connect(ui->leftMakeComboBox, qOverload<int>(&QComboBox::currentIndexChanged),
+            this, [this](int) {
+                populateModelFilter(ui->leftMakeComboBox, ui->leftModelComboBox, "Pick make first");
+                populateCarSelector(ui->leftMakeComboBox, ui->leftModelComboBox, ui->leftCarComboBox);
+            });
+    connect(ui->rightMakeComboBox, qOverload<int>(&QComboBox::currentIndexChanged),
+            this, [this](int) {
+                populateModelFilter(ui->rightMakeComboBox, ui->rightModelComboBox, "Pick make first");
+                populateCarSelector(ui->rightMakeComboBox, ui->rightModelComboBox, ui->rightCarComboBox);
+            });
+    connect(ui->leftModelComboBox, qOverload<int>(&QComboBox::currentIndexChanged),
+            this, [this](int) {
+                populateCarSelector(ui->leftMakeComboBox, ui->leftModelComboBox, ui->leftCarComboBox);
+            });
+    connect(ui->rightModelComboBox, qOverload<int>(&QComboBox::currentIndexChanged),
+            this, [this](int) {
+                populateCarSelector(ui->rightMakeComboBox, ui->rightModelComboBox, ui->rightCarComboBox);
+            });
     connect(&m_carApiClient, &CarApiClient::carsLoaded,
             this, &MainWindow::onCarsLoaded);
     connect(&m_carApiClient, &CarApiClient::errorOccurred,
@@ -283,7 +301,8 @@ void MainWindow::onSearchClicked()
     const bool hasSpecificModel = ui->modelSearchComboBox->isEnabled() && ui->modelSearchComboBox->currentIndex() > 0;
 
     // NOTE FOR LATER:
-    // This local search flow currently acts as a year/make filter for both compare selectors together.
+    // This local search flow now controls the shared comparison pool,
+    // while each side has its own make/model filters for easier cross-brand matchups.
     // Future improvements:
     // 1. Let users load cars from different brands into Car A and Car B independently
     // 2. Expand the local catalog with many more cars/trims
@@ -305,11 +324,12 @@ void MainWindow::onSearchClicked()
 
     if (m_cars.isEmpty()) {
         clearCarSelectors();
+        populateSelectorFilters();
         ui->searchStatusLabel->setText("No local cars matched that search.");
         return;
     }
 
-    populateCarSelectors();
+    populateSelectorFilters();
 
     if (hasSpecificModel) {
         const QString selectedDisplayName = QString("%1 %2 %3").arg(year).arg(make, model);
@@ -341,7 +361,7 @@ void MainWindow::onYearChanged(int year)
     }
 
     populateMakeSearch();
-    populateCarSelectors();
+    populateSelectorFilters();
     ui->searchStatusLabel->setText(QString("Loaded %1 cars for %2. Choose a make to narrow the list.")
                                        .arg(m_cars.size())
                                        .arg(year));
@@ -369,7 +389,7 @@ void MainWindow::onMakeChanged(int index)
         m_cars.append(car);
     }
 
-    populateCarSelectors();
+    populateSelectorFilters();
 
     if (hasSpecificMake) {
         ui->searchStatusLabel->setText(QString("Loaded %1 %2 cars for %3. Pick a model to preselect one.")
@@ -391,7 +411,7 @@ void MainWindow::onCarsLoaded(const QVector<Car> &cars)
     }
 
     m_cars = cars;
-    populateCarSelectors();
+    populateSelectorFilters();
 
     ui->searchStatusLabel->setText(QString("Loaded %1 cars from the API results.").arg(cars.size()));
 }
@@ -472,13 +492,119 @@ void MainWindow::populateModelSearch()
 
 void MainWindow::populateCarSelectors()
 {
-    clearCarSelectors();
+    populateCarSelector(ui->leftMakeComboBox, ui->leftModelComboBox, ui->leftCarComboBox);
+    populateCarSelector(ui->rightMakeComboBox, ui->rightModelComboBox, ui->rightCarComboBox);
+}
+
+void MainWindow::populateSelectorFilters()
+{
+    const QString previousLeftMake = ui->leftMakeComboBox->currentText();
+    const QString previousRightMake = ui->rightMakeComboBox->currentText();
+    QStringList makes;
+
+    for (const Car &car : m_cars) {
+        if (!makes.contains(car.make())) {
+            makes.append(car.make());
+        }
+    }
+
+    makes.sort();
+
+    ui->leftMakeComboBox->blockSignals(true);
+    ui->rightMakeComboBox->blockSignals(true);
+    ui->leftMakeComboBox->clear();
+    ui->rightMakeComboBox->clear();
+    ui->leftMakeComboBox->addItem("All makes");
+    ui->rightMakeComboBox->addItem("All makes");
+
+    for (const QString &make : makes) {
+        ui->leftMakeComboBox->addItem(make);
+        ui->rightMakeComboBox->addItem(make);
+    }
+
+    int leftMakeIndex = ui->leftMakeComboBox->findText(previousLeftMake);
+    int rightMakeIndex = ui->rightMakeComboBox->findText(previousRightMake);
+    ui->leftMakeComboBox->setCurrentIndex(leftMakeIndex >= 0 ? leftMakeIndex : 0);
+    ui->rightMakeComboBox->setCurrentIndex(rightMakeIndex >= 0 ? rightMakeIndex : 0);
+    ui->leftMakeComboBox->blockSignals(false);
+    ui->rightMakeComboBox->blockSignals(false);
+
+    populateModelFilter(ui->leftMakeComboBox, ui->leftModelComboBox, "Pick make first");
+    populateModelFilter(ui->rightMakeComboBox, ui->rightModelComboBox, "Pick make first");
+    populateCarSelectors();
+}
+
+void MainWindow::populateModelFilter(QComboBox *makeComboBox, QComboBox *modelComboBox, const QString &disabledText)
+{
+    const QString selectedMake = makeComboBox->currentText();
+    const QString previousModel = modelComboBox->currentText();
+    QStringList models;
+
+    modelComboBox->blockSignals(true);
+    modelComboBox->clear();
+
+    if (makeComboBox->currentIndex() <= 0) {
+        modelComboBox->addItem(disabledText);
+        modelComboBox->setCurrentIndex(0);
+        modelComboBox->setEnabled(false);
+        modelComboBox->blockSignals(false);
+        return;
+    }
+
+    for (const Car &car : m_cars) {
+        if (car.make() == selectedMake && !models.contains(car.model())) {
+            models.append(car.model());
+        }
+    }
+
+    models.sort();
+
+    modelComboBox->addItem("All models");
+    for (const QString &model : models) {
+        modelComboBox->addItem(model);
+    }
+
+    const int previousIndex = modelComboBox->findText(previousModel);
+    modelComboBox->setCurrentIndex(previousIndex >= 0 ? previousIndex : 0);
+    modelComboBox->setEnabled(true);
+    modelComboBox->blockSignals(false);
+}
+
+void MainWindow::populateCarSelector(QComboBox *makeComboBox, QComboBox *modelComboBox, QComboBox *carComboBox)
+{
+    const QString selectedMake = makeComboBox->currentText();
+    const QString selectedModel = modelComboBox->currentText();
+    const bool hasSpecificMake = makeComboBox->currentIndex() > 0;
+    const bool hasSpecificModel = modelComboBox->isEnabled() && modelComboBox->currentIndex() > 0;
+    const int previousCarIndex = carComboBox->currentData().toInt();
+
+    carComboBox->blockSignals(true);
+    carComboBox->clear();
+    carComboBox->addItem("Select car", -1);
 
     for (int i = 0; i < m_cars.size(); i++) {
+        if (hasSpecificMake && m_cars[i].make() != selectedMake) {
+            continue;
+        }
+
+        if (hasSpecificModel && m_cars[i].model() != selectedModel) {
+            continue;
+        }
+
         const QString displayName = carDisplayName(m_cars[i]);
-        ui->leftCarComboBox->addItem(displayName, i);
-        ui->rightCarComboBox->addItem(displayName, i);
+        carComboBox->addItem(displayName, i);
     }
+
+    int restoredIndex = 0;
+    for (int i = 0; i < carComboBox->count(); ++i) {
+        if (carComboBox->itemData(i).toInt() == previousCarIndex) {
+            restoredIndex = i;
+            break;
+        }
+    }
+
+    carComboBox->setCurrentIndex(restoredIndex);
+    carComboBox->blockSignals(false);
 }
 
 QString MainWindow::carDisplayName(const Car &car) const
@@ -499,6 +625,16 @@ double MainWindow::performanceScore(const Car &car) const
 
 void MainWindow::clearCarSelectors()
 {
+    ui->leftMakeComboBox->clear();
+    ui->rightMakeComboBox->clear();
+    ui->leftMakeComboBox->addItem("All makes");
+    ui->rightMakeComboBox->addItem("All makes");
+    ui->leftModelComboBox->clear();
+    ui->rightModelComboBox->clear();
+    ui->leftModelComboBox->addItem("Pick make first");
+    ui->rightModelComboBox->addItem("Pick make first");
+    ui->leftModelComboBox->setEnabled(false);
+    ui->rightModelComboBox->setEnabled(false);
     ui->leftCarComboBox->clear();
     ui->rightCarComboBox->clear();
     ui->leftCarComboBox->addItem("Select car", -1);
