@@ -43,6 +43,7 @@ private:
     void populateCarSelectors();
     QString carDisplayName(const Car &car) const;
     double performanceScore(const Car &car) const;
+    QString formatComparisonResult(const Car &leftCar, const Car &rightCar, double leftScore, double rightScore) const;
     void clearCarSelectors();
 
     Ui::MainWindow *ui;

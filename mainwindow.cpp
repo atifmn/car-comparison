@@ -203,7 +203,8 @@ void MainWindow::applyTheme()
             border-radius: 10px;
             color: #f4f4f5;
             font-size: 14px;
-            min-height: 120px;
+            line-height: 1.35em;
+            min-height: 165px;
             padding: 18px;
         }
 
@@ -277,19 +278,7 @@ void MainWindow::onCompareClicked()
     double car1Val = performanceScore(car1);
     double car2Val = performanceScore(car2);
 
-    if (car1Val > car2Val){
-        ui->resultsLabel->setText(car1Name + " is the winner.\nScore: " + QString::number(car1Val)
-                                  + "\n\nHorsePower: " + QString::number(car1.horsepower()) + "\nTorque: " + QString::number(car1.torque())
-                                  + "\n0-60: " + QString::number(car1.zeroToSixty()) + " Seconds");
-    }
-    else if (car1Val < car2Val) {
-        ui->resultsLabel->setText(car2Name + " is the winner.\nScore: " + QString::number(car2Val)
-                                  + "\n\nHorsePower: " + QString::number(car2.horsepower()) + "\nTorque: " + QString::number(car2.torque())
-                                  + "\n0-60: " + QString::number(car2.zeroToSixty()) + " Seconds");
-    }
-    else {
-        ui->resultsLabel->setText("These cars are both tied. Value: " + QString::number(car1Val));
-    }
+    ui->resultsLabel->setText(formatComparisonResult(car1, car2, car1Val, car2Val));
 }
 
 void MainWindow::onSearchClicked()
@@ -621,6 +610,51 @@ double MainWindow::performanceScore(const Car &car) const
            + (((car.horsepower() * 1000.0) / car.weight()) * 2.0)
            + (((car.torque() * 1000.0) / car.weight()) * 1.5)
            + (car.horsepower() * 0.10);
+}
+
+QString MainWindow::formatComparisonResult(const Car &leftCar, const Car &rightCar, double leftScore, double rightScore) const
+{
+    const QString leftName = carDisplayName(leftCar);
+    const QString rightName = carDisplayName(rightCar);
+
+    if (leftScore == rightScore) {
+        return QString("Overall Result: Dead Even\n\n"
+                       "%1 score: %2\n"
+                       "%3 score: %4\n\n"
+                       "Both cars landed on the same performance score for this formula.")
+            .arg(leftName)
+            .arg(QString::number(leftScore, 'f', 1))
+            .arg(rightName)
+            .arg(QString::number(rightScore, 'f', 1));
+    }
+
+    const Car &winner = leftScore > rightScore ? leftCar : rightCar;
+    const Car &runnerUp = leftScore > rightScore ? rightCar : leftCar;
+    const double winnerScore = leftScore > rightScore ? leftScore : rightScore;
+    const double runnerUpScore = leftScore > rightScore ? rightScore : leftScore;
+    const QString winnerName = carDisplayName(winner);
+    const QString runnerUpName = carDisplayName(runnerUp);
+    const QString horsepowerWinner = leftCar.horsepower() >= rightCar.horsepower() ? leftName : rightName;
+    const QString torqueWinner = leftCar.torque() >= rightCar.torque() ? leftName : rightName;
+    const QString zeroToSixtyWinner = leftCar.zeroToSixty() <= rightCar.zeroToSixty() ? leftName : rightName;
+
+    return QString("Overall Winner: %1\n\n"
+                   "%1 score: %2\n"
+                   "%3 score: %4\n\n"
+                   "Horsepower edge: %5\n"
+                   "Torque edge: %6\n"
+                   "0-60 edge: %7\n\n"
+                   "%1 puts up %8 hp, %9 lb-ft, and %10 sec 0-60.")
+        .arg(winnerName)
+        .arg(QString::number(winnerScore, 'f', 1))
+        .arg(runnerUpName)
+        .arg(QString::number(runnerUpScore, 'f', 1))
+        .arg(horsepowerWinner)
+        .arg(torqueWinner)
+        .arg(zeroToSixtyWinner)
+        .arg(winner.horsepower())
+        .arg(winner.torque())
+        .arg(QString::number(winner.zeroToSixty(), 'f', 1));
 }
 
 void MainWindow::clearCarSelectors()
