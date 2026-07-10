@@ -86,6 +86,16 @@ void MainWindow::applyTheme()
             padding-bottom: 8px;
         }
 
+        QLabel#dataSourceLabel {
+            background-color: #1b222b;
+            border: 1px solid #343a46;
+            border-radius: 12px;
+            color: #ff8e86;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 12px;
+        }
+
         QGroupBox {
             background-color: #1a1d22;
             border: 1px solid #343a46;
@@ -164,7 +174,7 @@ void MainWindow::applyTheme()
             font-size: 15px;
             font-weight: 800;
             letter-spacing: 1px;
-            min-height: 46px;
+            min-height: 50px;
             padding: 10px 24px;
         }
 
@@ -674,3 +684,4 @@ void MainWindow::clearCarSelectors()
     ui->leftCarComboBox->addItem("Select car", -1);
     ui->rightCarComboBox->addItem("Select car", -1);
 }
+

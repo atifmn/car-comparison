@@ -56,6 +56,16 @@
       </property>
      </widget>
     </item>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="dataSourceLabel">
+      <property name="text">
+       <string>LOCAL CATALOG 2015-2020</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="QGroupBox" name="searchGroupBox">
       <property name="title">
@@ -291,3 +301,4 @@
  <resources/>
  <connections/>
 </ui>
+
